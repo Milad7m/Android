@@ -1,2 +1,2 @@
 # Android-
-Great Milad Android Apps &amp; Projects 
+This Repository Is Devoted To My Tasteful Android Applications & Projects 
