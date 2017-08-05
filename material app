@@ -1,0 +1,692 @@
+// Design by Great Milad
+
+compile 'com.android.support:design:23.0.0'
+compile 'com.android.support:appcompat-v7:23.0.0'
+compile 'com.android.support:cardview-v7:23.0.0'
+compile 'com.android.support:recyclerview-v7:23.0.0'
+
+<style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
+<style name="AppTheme" parent="BaseTheme"/>
+<style name="AppTheme" parent="BaseTheme"/>
+
+android:theme="@style/AppTheme"
+
+<resources>    <item name="blue" type="color">#2196f3</item>  
+<item name="purple" type="color">#9c27b0</item>  
+<item name="green" type="color">#1b5e20</item>  
+<item name="orange" type="color">#ff5722</item>   
+<item name="red" type="color">#f44336</item>  
+<item name="indigo" type="color">#3f51b5</item>    
+<item name="deep_purple" type="color">#673ab7</item>  
+<item name="light_green" type="color">#689f38</item> 
+<item name="teal" type="color">#009688</item>  
+<item name="pink" type="color">#e91e63</item> 
+<integer-array name="initial_colors">    
+<item>@color/blue</item>  
+<item>@color/purple</item>   
+<item>@color/green</item>    
+<item>@color/orange</item>    
+<item>@color/red</item>    
+<item>@color/indigo</item>  
+<item>@color/deep_purple</item>   
+<item>@color/light_green</item>  
+<item>@color/teal</item>     
+<item>@color/pink</item>   
+<!--more colors here-->  
+</integer-array></resources>
+
+<resources>   
+<string-array name="names_array">   
+<item>Michael</item>     
+<item>Jennifer</item> 
+<item>Christopher</item>     
+<item>Amy</item>      
+<item>Jason</item>      
+<item>Melissa</item>    
+<item>David</item>    
+<item>Michelle</item>   
+<item>James</item>    
+<item>Kimberly</item>     
+<!--more names here-->   
+</string-array></resources>
+
+<RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"  
+xmlns:tools="http://schemas.android.com/tools"    
+android:layout_width="match_parent"   
+android:layout_height="match_parent"  
+android:paddingBottom="@dimen/activity_vertical_margin" 
+android:paddingLeft="@dimen/activity_horizontal_margin" 
+android:paddingRight="@dimen/activity_horizontal_margin"  
+android:paddingTop="@dimen/activity_vertical_margin"   
+tools:context=".SampleMaterialActivity">  
+<android.support.v7.widget.RecyclerView   
+android:id="@+id/recycler_view"   
+android:layout_width="match_parent"    
+android:layout_height="match_parent"     
+android:scrollbars="vertical" />    
+<android.support.design.widget.FloatingActionButton    
+android:id="@+id/fab"   
+android:layout_width="wrap_content"   
+android:layout_height="wrap_content"    
+android:layout_alignParentBottom="true"    
+android:layout_alignParentEnd="true"     
+android:layout_marginBottom="25dp"     
+android:layout_marginEnd="25dp"   
+android:clickable="true"    
+android:contentDescription="@string/fab"        
+android:elevation="6dp"      
+android:src="@android:drawable/ic_input_add"      
+android:transitionName="fab_transition"  
+android:tint="@android:color/white" />
+</RelativeLayout>
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {  
+super.onCreate(savedInstanceState);   
+setContentView(R.layout.activity_sample_material);  
+names = getResources().getStringArray(R.array.names_array); 
+colors = getResources().getIntArray(R.array.initial_colors); 
+initCards();    
+if (adapter == null) { 
+adapter = new SampleMaterialAdapter(this, cardsList); 
+}    
+recyclerView = (RecyclerView) findViewById(R.id.recycler_view);  
+recyclerView.setAdapter(adapter);   
+recyclerView.setLayoutManager(new LinearLayoutManager(this));
+// other functionality implemented here
+}
+
+public class Card { 
+private long id;   
+private String name;   
+private int color_resource; 
+public long getId() 
+{ return id;
+}    
+public void setId(long id)
+{ this.id = id; 
+}  
+public String getName()
+{ return name; 
+}  
+public void setName(String name) 
+{ this.name = name;
+}    public int getColorResource()
+{ return color_resource;
+}  
+public void setColorResource(int color_resource) {   
+this.color_resource = color_resource; 
+}
+}
+
+private void initCards() { 
+for (int i = 0; i < 50; i++) 
+{       
+Card card = new Card(); 
+card.setId((long) i);      
+card.setName(names[i]);   
+card.setColorResource(colors[i]);    
+Log.d(DEBUG_TAG, "Card id " + card.getId() + ", name " +           
+card.getName() + ", color " + card.getColorResource());     
+cardsList.add(card);    }
+}
+
+public class SampleMaterialAdapter extends        
+RecyclerView.Adapter<SampleMaterialAdapter.ViewHolder> {  
+private static final String DEBUG_TAG = "SampleMaterialAdapter";  
+public Context context; 
+public ArrayList<Card> cardsList;   
+public SampleMaterialAdapter(Context context, ArrayList<Card> cardsList) {    
+this.context = context;      
+this.cardsList = cardsList;    
+}    
+@Override   
+public int getItemCount() {   
+if (cardsList.isEmpty()) {        
+return 0;     
+} else 
+{         
+return cardsList.size();    
+}   
+}  
+@Override   
+public long getItemId(int position) {  
+return cardsList.get(position).getId();  
+}    
+@Override   
+public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {    
+LayoutInflater li = LayoutInflater.from(viewGroup.getContext()); 
+View v = li.inflate(R.layout.card_view_holder, viewGroup, false);
+return new ViewHolder(v);  
+}  
+@Override   
+public void onBindViewHolder(ViewHolder viewHolder, int position) {   
+String name = cardsList.get(position).getName();     
+int color = cardsList.get(position).getColorResource();    
+TextView initial = viewHolder.initial;     
+TextView nameTextView = viewHolder.name;     
+nameTextView.setText(name);       
+initial.setBackgroundColor(color);     
+initial.setText(Character.toString(name.charAt(0)));  
+} 
+// ViewHolder implemented here
+}
+
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:card_view="http://schemas.android.com/apk/res-auto"   
+android:id="@+id/card_layout"  
+android:layout_width="match_parent"  
+android:layout_height="match_parent"  
+android:layout_margin="3dp" 
+android:clickable="true"   
+android:foreground="?android:attr/selectableItemBackground"    
+android:orientation="vertical"   
+card_view:cardCornerRadius="10dp">  
+<LinearLayout     
+android:layout_width="match_parent"   
+android:layout_height="match_parent" 
+android:id="@+id/linear"    
+android:background="@android:color/white"
+android:orientation="vertical"    
+android:transitionName="layout_transition"     
+android:padding="@dimen/padding">       
+<TextView           
+android:id="@+id/initial"     
+android:layout_width="match_parent"      
+android:layout_height="match_parent"    
+android:gravity="center"        
+android:transitionName="initial_transition"      
+android:textColor="@android:color/white"       
+android:textSize="@dimen/initial_size" />   
+<LinearLayout         
+android:layout_width="match_parent"     
+android:layout_height="match_parent"  
+android:background="@android:color/white"      
+android:orientation="horizontal">      
+<Button           
+android:id="@+id/delete_button"      
+android:layout_width="wrap_content"       
+android:layout_height="match_parent"     
+android:transitionName="delete_button_transition"         
+android:text="@string/delete_button" />      
+<TextView           
+android:id="@+id/name"     
+android:layout_width="match_parent"       
+android:layout_height="wrap_content"        
+android:transitionName="name_transition"         
+android:textColor="@android:color/black"       
+android:textSize="@dimen/text_size" />      
+</LinearLayout> 
+</LinearLayout></android.support.v7.widget.CardView>
+
+public class ViewHolder extends RecyclerView.ViewHolder 
+{    
+private TextView initial;   
+private TextView name;   
+private Button deleteButton; 
+public ViewHolder(View v) {      
+super(v);    
+initial = (TextView) v.findViewById(R.id.initial);     
+name = (TextView) v.findViewById(R.id.name);      
+deleteButton = (Button) v.findViewById(R.id.delete_button);    
+deleteButton.setOnClickListener(new View.OnClickListener() {    
+// onClick implemented here  
+});      
+itemView.setOnClickListener(new View.OnClickListener() {    
+// onClick implemented here   
+});  
+}
+}
+
+public void animateCircularReveal(View view) {  
+int centerX = 0; 
+int centerY = 0;    
+int startRadius = 0; 
+int endRadius = Math.max(view.getWidth(), view.getHeight());  
+Animator animation = ViewAnimationUtils.createCircularReveal(view,    
+centerX, centerY, startRadius, endRadius); 
+view.setVisibility(View.VISIBLE);  
+animation.start();
+}
+
+@Override
+public void onViewAttachedToWindow(ViewHolder viewHolder)
+{  
+super.onViewAttachedToWindow(viewHolder);   
+animateCircularReveal(viewHolder.itemView);
+}
+
+FloatingActionButton fab = (FloatingActionButton) 
+findViewById(R.id.fab);
+fab.setOnClickListener(new View.OnClickListener() {  
+@Override   
+public void onClick(View v) {   
+Pair<View, String> pair = Pair.create(v.findViewById(R.id.fab),TRANSITION_FAB);    
+ActivityOptionsCompat options;   
+Activity act = SampleMaterialActivity.this;    
+options = ActivityOptionsCompat.makeSceneTransitionAnimation(act, pair);   
+Intent transitionIntent = new Intent(act, TransitionAddActivity.class);  
+act.startActivityForResult(transitionIntent, adapter.getItemCount(),options.toBundle());  
+}
+});
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"   
+xmlns:tools="http://schemas.android.com/tools"   
+android:id="@+id/linear" 
+android:layout_width="match_parent"  
+android:layout_height="match_parent" 
+android:background="@android:color/white"    
+android:orientation="vertical"  
+android:padding="@dimen/padding"   
+android:paddingBottom="@dimen/activity_vertical_margin"   
+android:paddingLeft="@dimen/activity_horizontal_margin"  
+android:paddingRight="@dimen/activity_horizontal_margin"  
+android:paddingTop="@dimen/activity_vertical_margin"  
+android:transitionName="fab_transition"  
+tools:context="com.introtoandroid.samplematerial.TransitionAddActivity">   
+<TextView     
+android:id="@+id/initial"  
+android:layout_width="match_parent"    
+android:layout_height="0dp"     
+android:layout_weight="1"    
+android:gravity="center"   
+android:textColor="@android:color/white"    
+android:textSize="@dimen/initial_size" />
+<LinearLayout   
+android:layout_width="match_parent"    
+android:layout_height="0dp"    
+android:layout_weight="1"      
+android:background="@android:color/white"    
+android:orientation="vertical">      
+<EditText       
+android:id="@+id/name"      
+android:layout_width="match_parent"         
+android:layout_height="wrap_content"      
+android:inputType="textCapSentences"     
+android:textColor="@android:color/black"       
+android:textSize="@dimen/text_size" />     
+<LinearLayout        
+android:layout_width="match_parent"
+android:layout_height="wrap_content"         
+android:background="@android:color/white"   
+android:orientation="horizontal">         
+<Button               
+android:id="@+id/add_button"  
+android:layout_width="wrap_content"      
+android:layout_height="wrap_content"    
+android:text="@string/add_button" /> 
+</LinearLayout>  
+</LinearLayout></LinearLayout>
+
+public class TransitionAddActivity extends AppCompatActivity {  
+private EditText nameEditText;  
+private TextView initialTextView; 
+private int color;  
+private Intent intent;  
+private Random randomGenerator = new Random();  
+@Override    
+protected void onCreate(Bundle savedInstanceState) {   
+super.onCreate(savedInstanceState);  
+setContentView(R.layout.activity_transition_add);  
+nameEditText = (EditText) findViewById(R.id.name);  
+initialTextView = (TextView) findViewById(R.id.initial);     
+Button add_button = (Button) findViewById(R.id.add_button);  
+intent = getIntent();       
+int[] colors = getResources().getIntArray(R.array.initial_colors);    
+color = colors[randomGenerator.nextInt(50)];       
+initialTextView.setText("");    
+initialTextView.setBackgroundColor(color);     
+nameEditText.addTextChangedListener(new TextWatcher() {        
+@Override         
+public void onTextChanged(CharSequence s, int start, int before, intcount) {  
+
+if (count == 0) {               
+// add initialTextView    
+initialTextView.setText("");  
+} 
+else if (count == 1)
+{                   
+// initialTextView set to first letter of nameEditText andadd name stringExtra                    initialTextView.setText(String.valueOf(s.charAt(0)));               
+}          
+}        
+@Override       
+public void beforeTextChanged(CharSequence s, int start, int count,int after) {  
+}          
+@Override       
+public void afterTextChanged(Editable s) {        
+}       
+});       
+add_button.setOnClickListener(new View.OnClickListener() {      
+@Override           
+public void onClick(View v) {       
+// must not be zero otherwise do not finish activity and reportToast message   
+String text = initialTextView.getText().toString().trim();  
+if (TextUtils.isEmpty(text)) {             
+Toast.makeText(getApplicationContext(),  
+"Enter a valid name", Toast.LENGTH_SHORT).show();      
+} else {              
+intent.putExtra(SampleMaterialActivity.EXTRA_NAME,       
+String.valueOf(nameEditText.getText()));             
+intent.putExtra(SampleMaterialActivity.EXTRA_INITIAL,  
+String.valueOf(nameEditText.getText().charAt(0)));        
+intent.putExtra(SampleMaterialActivity.EXTRA_COLOR, color);     
+setResult(RESULT_OK, intent);              
+supportFinishAfterTransition();         
+}          
+}     
+});  
+}
+}
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) { 
+super.onActivityResult(requestCode, resultCode, data);   
+Log.d(DEBUG_TAG, "requestCode is " + requestCode);   
+// if adapter.getItemCount() is request code,  
+// that means we are adding a new position 
+// anything less than adapter.getItemCount()    
+// means we are editing a particular position 
+if (requestCode == adapter.getItemCount()) {   
+if (resultCode == RESULT_OK) {
+// Make sure the Add request was successful    
+// if add name, insert name in list        
+String name = data.getStringExtra(EXTRA_NAME);  
+int color = data.getIntExtra(EXTRA_COLOR, 0);  
+adapter.addCard(name, color);      
+}   
+} else {   
+// Anything other than adapter.getItemCount()      
+// means editing a particular list item    
+// the requestCode is the list item position    
+if (resultCode == RESULT_OK) {          
+// implement edit here 
+}   
+}
+}
+
+public void addCard(String name, int color) {   
+Card card = new Card();   
+card.setName(name);   
+card.setColorResource(color); 
+card.setId(getItemCount());   
+cardsList.add(card);  
+((SampleMaterialActivity) context).doSmoothScroll(getItemCount());   
+notifyItemInserted(cardsList.size());
+}
+
+public void doSmoothScroll(int position) {   
+recyclerView.smoothScrollToPosition(position);
+}
+
+@Override
+public void onViewAttachedToWindow(ViewHolder viewHolder)
+{   
+super.onViewAttachedToWindow(viewHolder);  
+animateCircularReveal(viewHolder.itemView);
+}
+
+itemView.setOnClickListener(new View.OnClickListener() {
+@Override  
+public void onClick(View v) {   
+Pair<View, String> p1 = Pair.create((View) initial,         
+SampleMaterialActivity.TRANSITION_INITIAL); 
+Pair<View, String> p2 = Pair.create((View) name, 
+SampleMaterialActivity.TRANSITION_NAME);   
+Pair<View, String> p3 = Pair.create((View) deleteButton,   
+SampleMaterialActivity.TRANSITION_DELETE_BUTTON);      
+ActivityOptionsCompat options;       
+Activity act = (AppCompatActivity) context;   
+options = ActivityOptionsCompat.makeSceneTransitionAnimation(act, p1, p2, p3);      
+int requestCode = getAdapterPosition();  
+String name = cardsList.get(requestCode).getName();     
+int color = cardsList.get(requestCode).getColorResource();      
+Log.d(DEBUG_TAG,          
+"SampleMaterialAdapter itemView listener for Edit adapter position "+     
+requestCode);      
+Intent transitionIntent = new Intent(context, TransitionEditActivity.class);  
+transitionIntent.putExtra(SampleMaterialActivity.EXTRA_NAME, name);       
+transitionIntent.putExtra(SampleMaterialActivity.EXTRA_INITIAL,        
+Character.toString(name.charAt(0)));      
+transitionIntent.putExtra(SampleMaterialActivity.EXTRA_COLOR, color);  
+transitionIntent.putExtra(SampleMaterialActivity.EXTRA_UPDATE, false); 
+transitionIntent.putExtra(SampleMaterialActivity.EXTRA_DELETE, false);   
+((AppCompatActivity) context).startActivityForResult(transitionIntent,     
+requestCode, options.toBundle()); 
+}
+});
+
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"  
+xmlns:tools="http://schemas.android.com/tools"  
+android:id="@+id/linear"    
+android:layout_width="match_parent"  
+android:layout_height="match_parent"  
+android:background="@android:color/white" 
+android:orientation="vertical" 
+android:padding="@dimen/padding"   
+android:paddingBottom="@dimen/activity_vertical_margin"  
+android:paddingLeft="@dimen/activity_horizontal_margin"   
+android:paddingRight="@dimen/activity_horizontal_margin" 
+android:paddingTop="@dimen/activity_vertical_margin"   
+android:transitionName="layout_transition"  
+tools:context="com.introtoandroid.samplematerial.TransitionEditActivity">  
+<TextView       
+android:id="@+id/initial"  
+android:layout_width="match_parent"    
+android:layout_height="0dp"   
+android:layout_weight="1"     
+android:gravity="center"     
+android:textColor="@android:color/white"      
+android:textSize="@dimen/initial_size"    
+android:transitionName="initial_transition" /> 
+<LinearLayout       
+android:layout_width="match_parent"   
+android:layout_height="0dp"     
+android:layout_weight="1"   
+android:background="@android:color/white"   
+android:orientation="vertical">        
+<EditText          
+android:id="@+id/name"          
+android:layout_width="match_parent" 
+android:layout_height="wrap_content"    
+android:inputType="textCapSentences"    
+android:textColor="@android:color/black"   
+android:textSize="@dimen/text_size"      
+android:transitionName="name_transition" /> 
+<LinearLayout        
+android:layout_width="match_parent"   
+android:layout_height="wrap_content"    
+android:background="@android:color/white"   
+android:orientation="horizontal"     
+android:transitionName="delete_button_transition">     
+<Button                
+android:id="@+id/update_button"      
+android:layout_width="wrap_content"      
+android:layout_height="wrap_content"         
+android:text="@string/update_button" />    
+<Button               
+android:id="@+id/delete_button"       
+android:layout_width="wrap_content"        
+android:layout_height="wrap_content"     
+android:text="@string/delete_button" />   
+</LinearLayout> 
+</LinearLayout></LinearLayout>
+
+public class TransitionEditActivity extends AppCompatActivity 
+{    
+private EditText nameEditText;  
+private TextView initialTextView;  
+private Intent intent;   
+@Override   
+protected void onCreate(Bundle savedInstanceState) {  
+super.onCreate(savedInstanceState);      
+setContentView(R.layout.activity_transition_edit);    
+nameEditText = (EditText) findViewById(R.id.name);  
+initialTextView = (TextView) findViewById(R.id.initial);  
+Button updateButton = (Button) findViewById(R.id.update_button);  
+Button deleteButton = (Button) findViewById(R.id.delete_button);  
+intent = getIntent();        
+String nameExtra = intent.getStringExtra(SampleMaterialActivity.EXTRA_NAME);     
+String initialExtra =          
+intent.getStringExtra(SampleMaterialActivity.EXTRA_INITIAL);    
+int colorExtra = intent.getIntExtra(SampleMaterialActivity.EXTRA_COLOR, 0);   
+nameEditText.setText(nameExtra);   
+nameEditText.setSelection(nameEditText.getText().length());     
+initialTextView.setText(initialExtra);    
+initialTextView.setBackgroundColor(colorExtra); 
+nameEditText.addTextChangedListener(new TextWatcher() {      
+@Override        
+public void onTextChanged(CharSequence s,                      
+int start, int before, int count) {             
+if (s.length() == 0) {    
+// update initialTextView       
+initialTextView.setText("");       
+} else if (s.length() >= 1)
+{                  
+// initialTextView set to first letter of             
+// nameEditText and update name stringExtra                
+initialTextView.setText(String.valueOf(s.charAt(0)));      
+intent.putExtra(SampleMaterialActivity.EXTRA_UPDATE, true);  
+}         
+}        
+@Override        
+public void beforeTextChanged(CharSequence s,      
+int start, int count, int after) {     
+}          
+@Override         
+public void afterTextChanged(Editable s) {    
+}       
+});      
+updateButton.setOnClickListener(new View.OnClickListener() {      
+@Override           
+public void onClick(View v) {    
+// must not be zero otherwise do not   
+// finish activity and report Toast message   
+String text = initialTextView.getText().toString().trim();     
+if (TextUtils.isEmpty(text)) {              
+Toast.makeText(getApplicationContext(),    
+"Enter a valid name", Toast.LENGTH_SHORT).show();    
+} else {              
+intent.putExtra(SampleMaterialActivity.EXTRA_UPDATE, true);    
+intent.putExtra(SampleMaterialActivity.EXTRA_NAME,         
+String.valueOf(nameEditText.getText()));              
+intent.putExtra(SampleMaterialActivity.EXTRA_INITIAL,   
+String.valueOf(nameEditText.getText().charAt(0)));          
+setResult(RESULT_OK, intent);             
+supportFinishAfterTransition();             
+}          
+}     
+});        
+// delete implemented here   
+}
+}
+
+@Override
+protected void onActivityResult(int requestCode,
+int resultCode, Intent data) 
+{    
+super.onActivityResult(requestCode, resultCode, data);
+if (requestCode == adapter.getItemCount()) {  
+// add implemented here   
+} 
+else {       
+if (resultCode == RESULT_OK) {      
+// Make sure the request was successful       
+RecyclerView.ViewHolder viewHolder =             
+recyclerView.findViewHolderForAdapterPosition(requestCode);     
+if (data.getExtras().getBoolean(EXTRA_DELETE, false)) { 
+// delete implemented here       
+} 
+else if (data.getExtras().getBoolean(EXTRA_UPDATE)) {          
+// if name changed, update user            
+String name = data.getStringExtra(EXTRA_NAME);  
+viewHolder.itemView.setVisibility(View.INVISIBLE);  
+adapter.updateCard(name, requestCode);        
+}      
+}  
+}
+}
+
+public void updateCard(String name, int list_position) 
+{    
+cardsList.get(list_position).setName(name);   
+Log.d(DEBUG_TAG, "list_position is " + list_position);  
+notifyItemChanged(list_position);
+}
+
+deleteButton.setOnClickListener(new View.OnClickListener() 
+{  
+@Override   
+public void onClick(View v) {     
+animateCircularDelete(itemView, getAdapterPosition());   
+}
+});
+
+public void animateCircularDelete(final View view, final int list_position) { 
+int centerX = view.getWidth();    
+int centerY = view.getHeight();  
+int startRadius = view.getWidth();
+int endRadius = 0;   
+Animator animation = ViewAnimationUtils.createCircularReveal(view,      
+centerX, centerY, startRadius, endRadius);   
+animation.addListener(new AnimatorListenerAdapter() {    
+@Override     
+public void onAnimationEnd(Animator animation) {        
+super.onAnimationEnd(animation);          
+Log.d(DEBUG_TAG,             
+"SampleMaterialAdapter onAnimationEnd for Edit adapter position " +   
+list_position);          
+Log.d(DEBUG_TAG, "SampleMaterialAdapter onAnimationEnd for EditcardId " +    
+getItemId(list_position));         
+view.setVisibility(View.INVISIBLE);       
+cardsList.remove(list_ position);     
+notifyItemRemoved(list_ position);   
+}   
+});   
+animation.start();}
+
+@Overridepublic void onViewDetachedFromWindow(ViewHolder viewHolder) { 
+super.onViewDetachedFromWindow(viewHolder);    
+viewHolder.itemView.clearAnimation();
+}
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {  
+// other code implemented here  
+deleteButton.setOnClickListener(new View.OnClickListener() {   
+@Override      
+public void onClick(View v) {        
+intent.putExtra(SampleMaterialActivity.EXTRA_DELETE, true);  
+setResult(RESULT_OK, intent);     
+supportFinishAfterTransition();
+}  
+});
+}
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+super.onActivityResult(requestCode, resultCode, data);   
+if (requestCode == adapter.getItemCount()) 
+{      
+// add implemented here   
+} 
+else {   
+if (resultCode == RESULT_OK) {      
+// Make sure the request was successful   
+RecyclerView.ViewHolder viewHolder =       
+recyclerView.findViewHolderForAdapterPosition(requestCode);  
+if (data.getExtras().getBoolean(EXTRA_DELETE, false)) {   
+// The user is deleting a contact         
+adapter.deleteCard(viewHolder.itemView, requestCode);  
+} else if (data.getExtras().getBoolean(EXTRA_UPDATE)) {  
+// updated implemented here       
+}     
+}  
+}
+}
+public void deleteCard(View view, int list_position) {    
+animateCircularDelete(view, list_position);
+}
+
+// Enjoy ! By Great Milad
